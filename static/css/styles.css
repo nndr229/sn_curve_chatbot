@@ -1,0 +1,295 @@
+/* Material 3–inspired Dark Theme (Amber on near-black) */
+:root {
+  /* Core palette */
+  --md-sys-color-primary: #ffd54f; /* Amber 300 */
+  --md-sys-color-on-primary: #1a1a1a;
+  --md-sys-color-secondary: #b0bec5; /* Blue Grey 200 */
+  --md-sys-color-tertiary: #80cbc4; /* Teal 200 */
+  --md-sys-color-error: #ff6e6e;
+
+  /* Surfaces */
+  --md-sys-color-surface: #121212; /* M3 dark surface */
+  --md-sys-color-surface-1: #1b1b1b; /* Elevated */
+  --md-sys-color-surface-2: #222222; /* Higher elevation */
+  --md-sys-color-outline: #2b2b2b; /* Outlines/Dividers */
+  --md-sys-color-on-surface: #e6e1e5; /* Text */
+  --md-sys-color-on-surface-variant: #c6c1c7; /* Subdued text */
+
+  /* State layers */
+  --state-hover: 0.08;
+  --state-focus: 0.12;
+  --state-press: 0.12;
+
+  /* Typography */
+  --font: Inter, system-ui, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* App Bar */
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 18px;
+  background: linear-gradient(
+      0deg,
+      rgba(255, 213, 79, 0.06),
+      rgba(255, 213, 79, 0.06)
+    ),
+    var(--md-sys-color-surface-1);
+  border-bottom: 1px solid var(--md-sys-color-outline);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  backdrop-filter: saturate(1.1) blur(6px);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 6px rgba(255, 213, 79, 0.15);
+}
+header h1 {
+  font-size: 1.1rem;
+  margin: 0;
+}
+.tag {
+  color: var(--md-sys-color-on-surface-variant);
+  font-size: 0.9rem;
+}
+
+/* Layout */
+main {
+  display: grid;
+  grid-template-columns: 320px 1fr 360px;
+  gap: 12px;
+  min-height: calc(100vh - 56px);
+  padding: 12px;
+}
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Cards / Panels (elevations) */
+.panel,
+.canvas-wrap,
+.chat-wrap {
+  background: var(--md-sys-color-surface-1);
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.panel h2 {
+  margin: 0 0 10px 0;
+  font-size: 1.05rem;
+}
+
+/* Form Grid */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Text fields (Material-like filled) */
+input,
+select {
+  appearance: none;
+  background: var(--md-sys-color-surface-2);
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 12px;
+  padding: 10px 12px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+input:hover,
+select:hover {
+  border-color: #414141;
+}
+input:focus,
+select:focus {
+  border-color: var(--md-sys-color-primary);
+  box-shadow: 0 0 0 3px rgba(255, 213, 79, var(--state-focus));
+}
+
+/* Buttons (Contained & Outlined) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+  border: none;
+  border-radius: 14px;
+  padding: 10px 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.04s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+.btn:hover {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+  background: #ffe082;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn.ghost {
+  background: transparent;
+  color: var(--md-sys-color-on-surface);
+  border: 1px solid var(--md-sys-color-outline);
+}
+.btn.ghost:hover {
+  background: rgba(255, 213, 79, var(--state-hover));
+}
+
+/* Toggles */
+.toggles {
+  display: flex;
+  gap: 16px;
+  margin-top: 10px;
+  color: var(--md-sys-color-on-surface);
+}
+.toggles input {
+  accent-color: var(--md-sys-color-primary);
+}
+
+/* Alerts */
+.warning {
+  margin: 8px 12px;
+  padding: 10px 12px;
+  border-left: 4px solid var(--md-sys-color-error);
+  background: linear-gradient(
+      0deg,
+      rgba(255, 110, 110, 0.08),
+      rgba(255, 110, 110, 0.08)
+    ),
+    var(--md-sys-color-surface-1);
+  color: #ffb3b3;
+  border-radius: 10px;
+}
+
+/* Canvas / Legend */
+.canvas-wrap {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+#canvas-holder {
+  height: 520px;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  overflow: hidden;
+}
+.legend {
+  border-top: 1px solid var(--md-sys-color-outline);
+  padding: 10px;
+}
+.legend h3 {
+  margin: 0 0 6px 0;
+}
+#curveList {
+  margin: 0;
+  padding-left: 20px;
+  max-height: 150px;
+  overflow: auto;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Chat */
+.chat-header {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--md-sys-color-outline);
+  font-weight: 600;
+}
+.chat-window {
+  flex: 1;
+  overflow: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.chat-msg {
+  padding: 10px 12px;
+  border-radius: 14px;
+  max-width: 85%;
+  line-height: 1.45;
+}
+.me {
+  align-self: flex-end;
+  background: rgba(255, 213, 79, 0.12);
+  border: 1px solid rgba(255, 213, 79, 0.25);
+}
+.bot {
+  align-self: flex-start;
+  background: var(--md-sys-color-surface-2);
+  border: 1px solid var(--md-sys-color-outline);
+}
+.chat-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--md-sys-color-outline);
+}
+
+/* Footer */
+footer {
+  padding: 10px 14px;
+  border-top: 1px solid var(--md-sys-color-outline);
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Founders */
+.founders p {
+  color: var(--md-sys-color-on-surface);
+}
+
+/* Interactive states */
+.panel:hover,
+.canvas-wrap:hover,
+.chat-wrap:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* Reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .btn {
+    transition: none;
+  }
+}

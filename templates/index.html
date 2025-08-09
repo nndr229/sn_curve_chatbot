@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>S–N Curve Visualizer</title>
+    <link rel="stylesheet" href="/static/css/styles.css" />
+    <!-- p5.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <div class="logo-dot"></div>
+        <h1>S–N Curve Visualizer</h1>
+      </div>
+      <div class="tag">
+        Fatigue Analysis • Basquin • Mean-Stress Corrections
+      </div>
+    </header>
+
+    {% if warning %}
+    <div class="warning">⚠️ {{ warning }}</div>
+    {% endif %}
+
+    <main>
+      <aside class="sidebar">
+        <section class="panel">
+          <h2>Add Curve</h2>
+          <div class="grid">
+            <label
+              >σ<sub>f</sub>' (MPa)
+              <input id="sfInput" type="number" step="1" value="1000" />
+            </label>
+            <label
+              >Basquin b (positive)
+              <input id="bInput" type="number" step="0.01" value="0.1" />
+            </label>
+            <label
+              >N<sub>min</sub>
+              <input id="nminInput" type="number" step="1" value="1000" />
+            </label>
+            <label
+              >N<sub>max</sub>
+              <input id="nmaxInput" type="number" step="1" value="100000000" />
+            </label>
+            <label
+              >Mean stress model
+              <select id="meanModel">
+                <option value="none">None</option>
+                <option value="goodman">Goodman (Su)</option>
+                <option value="gerber">Gerber (Su)</option>
+                <option value="soderberg">Soderberg (Sy)</option>
+              </select>
+            </label>
+            <label
+              >σ<sub>m</sub> (mean, MPa)
+              <input id="smInput" type="number" step="1" value="0" />
+            </label>
+            <label
+              >S<sub>u</sub> (MPa)
+              <input id="suInput" type="number" step="1" value="600" />
+            </label>
+            <label
+              >S<sub>y</sub> (MPa)
+              <input id="syInput" type="number" step="1" value="350" />
+            </label>
+          </div>
+          <button id="addCurveBtn" class="btn">+ Add Curve</button>
+          <button id="clearCurvesBtn" class="btn ghost">✕ Clear All</button>
+          <div class="toggles">
+            <label><input id="logx" type="checkbox" checked /> Log N</label>
+            <label><input id="logy" type="checkbox" checked /> Log S</label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h2>Why S–N is Critical</h2>
+          <p>
+            The S–N curve empirically links the alternating stress level to
+            cycles-to-failure and is essential for durability design, inspection
+            intervals, and certification. It captures how small stress changes
+            at high cycle counts drastically shift life, supports design
+            allowables (endurance/finite-life), and integrates with damage rules
+            (e.g., Miner) for variable loading.
+          </p>
+        </section>
+
+        <section class="panel founders">
+          <h2>Founders’ Excerpt</h2>
+          <p>
+            "We built this tool to make fatigue reasoning visual, rigorous, and
+            practical. Our focus is clarity: expose assumptions, show
+            sensitivity, and always tie back to standards and tests. Engineering
+            judgment is a graph you can interrogate—curve by curve."
+          </p>
+        </section>
+      </aside>
+
+      <section class="canvas-wrap">
+        <div id="canvas-holder"></div>
+        <div class="legend">
+          <h3>Curves</h3>
+          <ol id="curveList"></ol>
+        </div>
+      </section>
+
+      <section class="chat-wrap">
+        <div class="chat-header">📎 Gemini Tutor</div>
+        <div id="chatWindow" class="chat-window"></div>
+        <div class="chat-input">
+          <input
+            id="chatBox"
+            type="text"
+            placeholder="Ask about the plot, equations, corrections, or certification…"
+          />
+          <button id="sendBtn" class="btn">Send</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <span>
+        Basquin: S<sub>a</sub> = σ<sub>f</sub>' · N<sup>−b</sup> • Mean-stress:
+        Goodman, Gerber, Soderberg
+      </span>
+    </footer>
+
+    <script src="/static/js/sketch.js"></script>
+    <script>
+      // Expose a getter for chat context
+      function getSNContext() {
+        return window.SNPlot ? window.SNPlot.exportContext() : {};
+      }
+    </script>
+    <script src="/static/js/chatbot.js"></script>
+  </body>
+</html>
