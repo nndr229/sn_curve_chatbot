@@ -317,3 +317,150 @@
     if (e.key === 'Enter') send();
   });
 })();
+// ---- Scenario Calculator (based on slide) ----
+(function () {
+  const el = (id) => document.getElementById(id);
+  const scSm = el('scSm'),
+    scSu = el('scSu'),
+    scSy = el('scSy'),
+    scNf = el('scNf'),
+    scDia = el('scDia'),
+    scFinish = el('scFinish'),
+    scModel = el('scModel'),
+    scOut = el('scOut'),
+    scBtn = el('scCompute');
+
+  if (!scBtn) return; // panel may not exist
+
+  // Simple Marin surface-factor (ka) approximations for steels (quick visual aid, not a code allowables substitute)
+  function surfaceFactorKa(finish) {
+    switch (finish) {
+      case 'polished':
+        return 1.0;
+      case 'ground':
+        return 0.9;
+      case 'machined':
+        return 0.85;
+      case 'asForged':
+        return 0.8;
+      default:
+        return 1.0;
+    }
+  }
+  // Very light size factor kb (for bending) heuristic; keep near 1.0 for small dia
+  function sizeFactorKb(d_mm) {
+    const d = Math.max(1, Number(d_mm || 10));
+    // crude fit; for d<=10 mm ~1.0
+    return d <= 10 ? 1.0 : Math.max(0.85, Math.pow(d / 10, -0.05));
+  }
+
+  function meanFactor(model, sm, Su, Sy) {
+    if (model === 'goodman') {
+      return Math.max(0, 1 - sm / Number(Su || 1));
+    } else if (model === 'gerber') {
+      const r = sm / Number(Su || 1);
+      return Math.max(0, 1 - r * r);
+    } else if (model === 'soderberg') {
+      return Math.max(0, 1 - sm / Number(Sy || 1));
+    }
+    return 1;
+  }
+
+  // Compute at target life Nf:
+  //   Sa0 = Sf' * Nf^{-b}   (Basquin)
+  //   Sa  = Sa0 * meanFactor(...)
+  //   Smax = Sm + Sa;  Smin = Sm - Sa;  R = Smin / Smax
+  function computeScenario() {
+    if (window.SNPlot == null) return null;
+    // Use the *latest* Basquin parameters from the Add Curve panel
+    const Sf = Number(document.getElementById('sfInput').value || 1000);
+    const b = Number(document.getElementById('bInput').value || 0.1);
+
+    const Sm = Number(scSm.value || 0);
+    const Su = Number(scSu.value || 0);
+    const Sy = Number(scSy.value || 0);
+    const Nf = Math.max(1, Number(scNf.value || 1e5));
+    const dia = Number(scDia.value || 10);
+    const fin = scFinish.value;
+    const model = scModel.value;
+
+    // optional finish/size factors (informative only)
+    const ka = surfaceFactorKa(fin);
+    const kb = sizeFactorKb(dia);
+
+    // Basquin alternating stress for target life (unadjusted)
+    let Sa0 = Sf * Math.pow(Nf, -b);
+
+    // Apply mean-stress reduction
+    const mf = meanFactor(model, Sm, Su, Sy);
+    let Sa = Sa0 * mf;
+
+    // Apply finish/size as a gentle modifier (note: strictly these affect endurance limit, not Sf'/b;
+    // shown here as an illustrative factor)
+    const adj = ka * kb;
+    Sa = Sa * adj;
+
+    const Smax = Sm + Sa;
+    const Smin = Sm - Sa;
+    const R = Smax !== 0 ? Smin / Smax : NaN;
+
+    return {
+      Sa0,
+      Sa,
+      Smax,
+      Smin,
+      R,
+      inputs: { Sm, Su, Sy, Nf, dia, fin, model, Sf, b, ka, kb, mf, adj },
+    };
+  }
+
+  scBtn.addEventListener('click', () => {
+    const res = computeScenario();
+    if (!res) {
+      scOut.textContent = 'No context available.';
+      return;
+    }
+
+    const fmt = (v) =>
+      Number.isFinite(v)
+        ? Math.abs(v) >= 100
+          ? v.toFixed(0)
+          : v.toFixed(2)
+        : '—';
+    scOut.innerHTML = `
+      <strong>Results @ Nf=${res.inputs.Nf.toLocaleString()} cycles</strong><br/>
+      Basquin Sa (no mean): <code>${fmt(res.Sa0)} MPa</code><br/>
+      Mean-stress & finish/size adjusted Sa: <code>${fmt(
+        res.Sa
+      )} MPa</code><br/>
+      Smax: <code>${fmt(res.Smax)} MPa</code> &nbsp; Smin: <code>${fmt(
+      res.Smin
+    )} MPa</code><br/>
+      Stress ratio R = Smin/Smax: <code>${fmt(res.R)}</code><br/>
+      <span style="color:#c6c1c7">[Model: ${res.inputs.model}, ka=${
+      res.inputs.ka
+    }, kb=${res.inputs.kb}]</span>
+    `;
+
+    // Store scenario in context so the chatbot can explain it
+    window.SNPlot.__scenario = {
+      Sa0: res.Sa0,
+      Sa: res.Sa,
+      Smax: res.Smax,
+      Smin: res.Smin,
+      R: res.R,
+      inputs: res.inputs,
+    };
+  });
+
+  // extend exportContext to include scenario
+  if (window.SNPlot) {
+    const oldExport = window.SNPlot.exportContext;
+    window.SNPlot.exportContext = function () {
+      const base = oldExport ? oldExport() : {};
+      return Object.assign({}, base, {
+        scenario: window.SNPlot.__scenario || null,
+      });
+    };
+  }
+})();

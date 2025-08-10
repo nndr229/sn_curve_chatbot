@@ -73,6 +73,51 @@
             <label><input id="logy" type="checkbox" checked /> Log S</label>
           </div>
         </section>
+        <section class="panel" id="scenarioPanel">
+          <h2>Scenario Calculator</h2>
+          <div class="grid">
+            <label
+              >Mean stress σm (MPa)
+              <input id="scSm" type="number" step="1" value="200" />
+            </label>
+            <label
+              >Ultimate Su (MPa)
+              <input id="scSu" type="number" step="1" value="1240" />
+            </label>
+            <label
+              >Yield Sy (MPa)
+              <input id="scSy" type="number" step="1" value="1170" />
+            </label>
+            <label
+              >Target life Nf (cycles)
+              <input id="scNf" type="number" step="1" value="50000" />
+            </label>
+            <label
+              >Rod diameter (mm)
+              <input id="scDia" type="number" step="0.1" value="10" />
+            </label>
+            <label
+              >Surface finish
+              <select id="scFinish">
+                <option value="polished" selected>Commercially polished</option>
+                <option value="machined">Machined</option>
+                <option value="ground">Ground</option>
+                <option value="asForged">As forged</option>
+              </select>
+            </label>
+            <label
+              >Mean-stress model
+              <select id="scModel">
+                <option value="goodman" selected>Goodman (Su)</option>
+                <option value="gerber">Gerber (Su)</option>
+                <option value="soderberg">Soderberg (Sy)</option>
+                <option value="none">None</option>
+              </select>
+            </label>
+          </div>
+          <button id="scCompute" class="btn">Compute Sa, Smax, Smin, R</button>
+          <div class="legend" id="scOut" style="margin-top: 8px"></div>
+        </section>
 
         <section class="panel">
           <h2>Why S–N is Critical</h2>

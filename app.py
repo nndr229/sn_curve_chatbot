@@ -73,10 +73,9 @@ def chat():
     rubric = (
         "REASONING CONTRACT:\n"
         "1) Use only the GRAPH_JSON below for numeric or curve-specific facts.\n"
-        "2) If a value (e.g., σf', b, N-range, Su, Sy, σm, model) is missing, say 'not in graph JSON'.\n"
-        "3) Prefer short equations (Basquin, mean-stress) and point to the specific curve index when relevant.\n"
-        "4) If asked for a conclusion, state assumptions explicitly.\n"
-        "5) Keep answers concise and actionable."
+        "2) Prefer `scenario` values when present (Sa, Smax, Smin, R) and explain how they were derived.\n"
+        "3) If a value is missing, say 'not in graph JSON'.\n"
+        "4) Keep answers concise.\n"
     )
 
     prompt_parts = [
